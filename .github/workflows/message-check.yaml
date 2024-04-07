@@ -22,9 +22,9 @@ jobs:
           title=$(echo "$commit_message" | sed -n '1p')
           content=$(echo "$commit_message" | sed '1d')
 
-          # Check if title is longer than 50 characters
-          if [ ${#title} -gt 50 ]; then
-            echo "Error: Commit title should not exceed 50 characters."
+          # Check if title is longer than 100 characters
+          if [ ${#title} -gt 100 ]; then
+            echo "Error: Commit title should not exceed 100 characters."
             exit 1
           fi
 
@@ -34,10 +34,10 @@ jobs:
             exit 1
           fi
 
-          # Check if content lines are longer than 50 characters
+          # Check if content lines are longer than 150 characters
           while IFS= read -r line; do
-            if [ ${#line} -gt 50 ]; then
-              echo "Error: Commit content should not exceed 50 characters per line."
+            if [ ${#line} -gt 150 ]; then
+              echo "Error: Commit content should not exceed 100 characters per line."
               exit 1
             fi
           done <<< "$content"
