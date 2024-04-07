@@ -18,10 +18,9 @@ jobs:
           # Get the commit message of the latest commit
           commit_message=$(git log --pretty=format:%B -n 1)
 
-          # Extract title, empty line, and content line
-          title=$(echo "$commit_message" | head -n 1)
-          empty_line=$(echo "$commit_message" | sed -n '/^$/p' | head -n 1)
-          content_line=$(echo "$commit_message" | tail -n +3)
+          # Extract title and content lines
+          title=$(echo "$commit_message" | sed -n '1p')
+          content=$(echo "$commit_message" | sed '1d')
 
           # Check if title is longer than 50 characters
           if [ ${#title} -gt 50 ]; then
@@ -29,14 +28,16 @@ jobs:
             exit 1
           fi
 
-          # Check if there is an empty line
-          if [ -z "$empty_line" ]; then
+          # Check if there is an empty line after the title
+          if ! echo "$content" | grep -q '^$'; then
             echo "Error: Commit message should contain an empty line after the title."
             exit 1
           fi
 
-          # Check if content line is longer than 50 characters
-          if [ ${#content_line} -gt 50 ]; then
-            echo "Error: Commit content should not exceed 50 characters per line."
-            exit 1
-          fi
+          # Check if content lines are longer than 50 characters
+          while IFS= read -r line; do
+            if [ ${#line} -gt 50 ]; then
+              echo "Error: Commit content should not exceed 50 characters per line."
+              exit 1
+            fi
+          done <<< "$content"
