@@ -22,12 +22,14 @@ jobs:
           commit_message=$(git log --pretty=format:%B -n 1)
 
           # Extract title and content lines
-          title=$(echo "$commit_message" | sed -n '1p')
+          # Extract title
+          title=$(echo "$commit_message" | head -n 1 | sed 's/Merge.*into //')
           content=$(echo "$commit_message" | sed '1d')
 
           # Check if title is longer than 80 characters
           if [ ${#title} -gt 80 ]; then
             echo "Error: Commit title should not exceed 80 characters."
+            echo "Commit message title: $title"
             exit 1
           fi
 
